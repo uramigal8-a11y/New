@@ -1,17 +1,13 @@
-name: Print Hello, Github Actions!
+name: Test MyApp
 
 on: 
-  push:
-    branches:
-      - main
-      - develop 
   pull_request:
     branches:
       - main
       - develop
 
 jobs:
- print-hello:
+ Test_MyApp:
   runs-on: ubuntu-latest
   steps:
   - name: Checkout code
