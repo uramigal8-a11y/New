@@ -48,7 +48,8 @@ jobs:
             echo "![Build Status](https://github.com/${{ github.repository }}/actions/workflows/test_app.yaml/badge.svg)" >> README.md
             git config --global user.name 'github-actions'
             git config --global user.email 'github-actions@github.com'
+            git checkout -B ${{ github.head_ref }}
             git add README.md
             git commit -m "Add build badge"
-            git push
+            git push origin ${{ github.head_ref }}
           fi
