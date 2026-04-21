@@ -1,4 +1,4 @@
-name: Print Hello, Github Actions!
+name: Test MyApp
 
 on: 
   push:
