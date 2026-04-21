@@ -4,9 +4,10 @@ on:
   push:
     branches:
       - main
-      - develop # Додаємо запуск при пуші в develop
+      - develop 
   pull_request:
     branches:
+      - main
       - develop
 
 jobs:
