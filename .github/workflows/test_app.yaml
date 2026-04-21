@@ -3,7 +3,6 @@ name: Test MyApp
 on: 
   pull_request:
     branches:
-      - main
       - develop
 
       
