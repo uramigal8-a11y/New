@@ -5,33 +5,50 @@ on:
     branches:
       - develop
 
-      
 jobs:
- Test_MyApp:
-  runs-on: ubuntu-latest
-  steps:
-  - name: Checkout code
-    uses: actions/checkout@v4
-    with:
-     token: ${{ secrets.NEW_TOKEN }}
-     fetch-depth: 0
+  Test_MyApp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.NEW_TOKEN }}
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-     
-  - name: Set up Python
-    uses: actions/setup-python@v5
-    with:
-      python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-  - name: Install dependencies
-    run: |
-      python -m pip install --upgrade pip
-      pip install -r requirements.txt
+      - name: Run tests
+        run: python -m pytest --cov=myapp --cov-report=xml --cov-fail-under=70
+        
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
 
-  - name: Run tests
-    run: python -m pytest --cov=myapp --cov-report=xml --cov-fail-under=70
-    
-  - name: Upload coverage report
-    uses: actions/upload-artifact@v4
-    with:
-      name: coverage-report
-      path: coverage.xml
+  build:
+    needs: Test_MyApp
+    if: success()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add badge to README
+        run: |
+          if ! grep -q "Build Status" README.md; then
+            echo "![Build Status](https://github.com/${{ github.repository }}/actions/workflows/test_app.yaml/badge.svg)" >> README.md
+            git config --global user.name 'github-actions'
+            git config --global user.email 'github-actions@github.com'
+            git add README.md
+            git commit -m "Add build badge"
+            git push
+          fi
